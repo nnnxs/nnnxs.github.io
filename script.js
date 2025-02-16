@@ -104,6 +104,16 @@ document.addEventListener('DOMContentLoaded', () => {
             event.stopPropagation();
         }
         
+        noCount++;
+        
+        // 如果点击次数达到5次，隐藏"不要"按钮，放大"可以"按钮
+        if (noCount >= 5) {
+            noBtn.style.display = 'none';
+            yesBtn.style.transform = 'scale(1.5)';
+            yesBtn.style.animation = 'pulse 1s infinite';
+            return;
+        }
+        
         // 获取可见区域的尺寸
         const viewportHeight = window.innerHeight;
         const viewportWidth = window.innerWidth;
@@ -137,12 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             usagiImg.src = './images/usagi-normal.png';
         }, 300);
-        
-        noCount++;
-        if (noCount >= 5) {
-            yesBtn.style.transform = 'scale(1.5)';
-            yesBtn.style.animation = 'pulse 1s infinite';
-        }
     }
 
     // 初始化"不要"按钮样式
