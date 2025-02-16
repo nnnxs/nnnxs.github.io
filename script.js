@@ -8,33 +8,54 @@ document.addEventListener('DOMContentLoaded', () => {
     let noCount = 0;
     let isMusicPlaying = false;
     
-    // 尝试自动播放
-    function tryAutoplay() {
+    // 创建音乐提示
+    const tip = document.createElement('div');
+    tip.textContent = '点击页面任何位置开始播放音乐 ♪';
+    tip.style.position = 'fixed';
+    tip.style.top = '10px';
+    tip.style.left = '50%';
+    tip.style.transform = 'translateX(-50%)';
+    tip.style.padding = '10px 20px';
+    tip.style.background = 'rgba(255, 105, 180, 0.8)';
+    tip.style.color = 'white';
+    tip.style.borderRadius = '20px';
+    tip.style.zIndex = '1000';
+    tip.style.boxShadow = '0 2px 10px rgba(255, 105, 180, 0.3)';
+    tip.style.fontSize = '14px';
+    document.body.appendChild(tip);
+    
+    // 5秒后淡出提示
+    setTimeout(() => {
+        tip.style.transition = 'opacity 0.5s';
+        tip.style.opacity = '0';
+        setTimeout(() => {
+            tip.remove();
+        }, 500);
+    }, 5000);
+    
+    // 尝试播放音乐
+    function tryPlayMusic() {
         bgm.play().then(() => {
             isMusicPlaying = true;
             musicBtn.classList.add('playing');
+            tip.style.display = 'none'; // 音乐开始播放后隐藏提示
         }).catch(error => {
             console.log('需要用户交互才能播放音乐');
         });
     }
     
-    // 监听页面任何点击事件来开始播放
+    // 监听页面点击事件来开始播放
     document.addEventListener('click', function startMusic() {
         if (!isMusicPlaying) {
-            tryAutoplay();
-            document.removeEventListener('click', startMusic);
+            tryPlayMusic();
         }
-    }, { once: true });
+    });
     
-    // 页面加载时尝试自动播放
-    tryAutoplay();
-    
-    // 音乐控制
-    musicBtn.addEventListener('click', () => {
+    // 音乐控制按钮
+    musicBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // 防止触发页面的点击事件
         if (!isMusicPlaying) {
-            bgm.play();
-            musicBtn.classList.add('playing');
-            isMusicPlaying = true;
+            tryPlayMusic();
         } else {
             bgm.pause();
             musicBtn.classList.remove('playing');
@@ -104,10 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h1>耶！我们在一起啦！ 🎉</h1>
             </div>
         `;
-        
-        // 播放庆祝音效
-        const audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-        audio.play().catch(e => console.log('无法播放音效'));
     });
     
     // 添加鼠标跟随效果
