@@ -142,13 +142,13 @@ h1 {
 
 @keyframes pulse {
     0% {
-        transform: scale(1);
+        transform: scale(1.5);
     }
     50% {
-        transform: scale(1.05);
+        transform: scale(1.7);
     }
     100% {
-        transform: scale(1);
+        transform: scale(1.5);
     }
 }
 
@@ -219,6 +219,9 @@ button:hover::after {
 .no-btn {
     background-color: #ffb6c1;
     color: white;
+    opacity: 1;
+    transform: scale(1);
+    z-index: 100;
 }
 
 button:hover {
@@ -265,25 +268,33 @@ button:hover {
         font-size: 1.2em;
         margin: 10px;
         min-width: 120px;
-        touch-action: none; /* 防止默认的触摸行为 */
     }
     
     .question {
         padding: 20px;
         margin: 20px;
+        width: 90%;
+        max-width: 400px;
     }
 
     .buttons {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
+        gap: 20px;
+        position: relative;
     }
 
     .no-btn {
+        position: fixed;
         touch-action: none;
         user-select: none;
         -webkit-touch-callout: none;
+    }
+
+    .yes-btn {
+        position: relative;
+        z-index: 50;
     }
 }
 

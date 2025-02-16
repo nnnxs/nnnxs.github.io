@@ -8,6 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let noCount = 0;
     let isMusicPlaying = false;
     
+    // 预定义"不要"按钮的位置
+    const positions = [
+        { x: '10%', y: '70%' },
+        { x: '80%', y: '60%' },
+        { x: '50%', y: '80%' },
+        { x: '20%', y: '50%' },
+        { x: '70%', y: '40%' },
+        { x: '40%', y: '30%' },
+        { x: '90%', y: '20%' },
+        { x: '30%', y: '90%' },
+    ];
+    let currentPosIndex = 0;
+    
     // 创建音乐提示
     const tip = document.createElement('div');
     tip.textContent = '点击页面任何位置开始播放音乐 ♪';
@@ -83,34 +96,52 @@ document.addEventListener('DOMContentLoaded', () => {
     // 每3秒创建一个心形
     setInterval(createHeart, 3000);
     
-    // "不要"按钮的躲避效果
+    // "不要"按钮的新效果
     function moveButton(event) {
-        const maxX = window.innerWidth - noBtn.offsetWidth;
-        const maxY = window.innerHeight - noBtn.offsetHeight;
+        event.preventDefault();
         
-        const randomX = Math.floor(Math.random() * maxX);
-        const randomY = Math.floor(Math.random() * maxY);
-        
-        noBtn.style.position = 'fixed';
-        noBtn.style.left = randomX + 'px';
-        noBtn.style.top = randomY + 'px';
+        // 防止连续触发
+        if (noBtn.style.opacity === '0') return;
         
         // 乌萨其表情变化
         usagiImg.src = './images/usagi-sad.png';
+        
+        // 按钮淡出
+        noBtn.style.transition = 'all 0.3s ease';
+        noBtn.style.opacity = '0';
+        noBtn.style.transform = 'scale(0.8)';
+        
+        // 切换到新位置并淡入
         setTimeout(() => {
-            usagiImg.src = './images/usagi-normal.png';
-        }, 500);
+            currentPosIndex = (currentPosIndex + 1) % positions.length;
+            noBtn.style.left = positions[currentPosIndex].x;
+            noBtn.style.top = positions[currentPosIndex].y;
+            
+            setTimeout(() => {
+                noBtn.style.opacity = '1';
+                noBtn.style.transform = 'scale(1)';
+                
+                // 恢复乌萨其表情
+                setTimeout(() => {
+                    usagiImg.src = './images/usagi-normal.png';
+                }, 300);
+            }, 100);
+        }, 300);
         
         noCount++;
         if (noCount >= 5) {
-            noBtn.style.transform = 'scale(0.5)';
             yesBtn.style.transform = 'scale(1.5)';
+            yesBtn.style.animation = 'pulse 1s infinite';
         }
         
-        // 防止触发点击事件
-        event.preventDefault();
         return false;
     }
+
+    // 初始化"不要"按钮样式
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = positions[0].x;
+    noBtn.style.top = positions[0].y;
+    noBtn.style.transition = 'all 0.3s ease';
 
     // 添加所有可能的事件监听
     noBtn.addEventListener('mouseover', moveButton);
