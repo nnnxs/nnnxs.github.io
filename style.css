@@ -261,12 +261,29 @@ button:hover {
     }
     
     button {
-        padding: 12px 30px;
-        font-size: 1em;
+        padding: 15px 40px;
+        font-size: 1.2em;
+        margin: 10px;
+        min-width: 120px;
+        touch-action: none; /* 防止默认的触摸行为 */
     }
     
     .question {
         padding: 20px;
+        margin: 20px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .no-btn {
+        touch-action: none;
+        user-select: none;
+        -webkit-touch-callout: none;
     }
 }
 

@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(createHeart, 3000);
     
     // "不要"按钮的躲避效果
-    noBtn.addEventListener('mouseover', () => {
+    function moveButton(event) {
         const maxX = window.innerWidth - noBtn.offsetWidth;
         const maxY = window.innerHeight - noBtn.offsetHeight;
         
@@ -106,7 +106,30 @@ document.addEventListener('DOMContentLoaded', () => {
             noBtn.style.transform = 'scale(0.5)';
             yesBtn.style.transform = 'scale(1.5)';
         }
+        
+        // 防止触发点击事件
+        event.preventDefault();
+        return false;
+    }
+
+    // 添加所有可能的事件监听
+    noBtn.addEventListener('mouseover', moveButton);
+    noBtn.addEventListener('touchstart', moveButton, { passive: false });
+    noBtn.addEventListener('touchmove', moveButton, { passive: false });
+    noBtn.addEventListener('click', moveButton);
+    
+    // 防止按钮被点击
+    noBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        return false;
     });
+
+    // 优化移动端体验
+    document.addEventListener('touchmove', (e) => {
+        if (e.target === noBtn) {
+            e.preventDefault();
+        }
+    }, { passive: false });
     
     // "可以"按钮的点击效果
     yesBtn.addEventListener('click', () => {
