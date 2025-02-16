@@ -327,6 +327,27 @@ button:hover {
         position: relative;
         z-index: 50;
     }
+
+    .music-control {
+        top: 10px;
+        right: 10px;
+        position: fixed;
+        z-index: 2000;
+    }
+
+    .music-btn {
+        width: 35px;
+        height: 35px;
+        background-color: rgba(255, 105, 180, 0.9);
+    }
+
+    .music-btn.playing {
+        animation: rotate 4s linear infinite;
+        animation-play-state: running;
+        -webkit-transform-style: preserve-3d;
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+    }
 }
 
 .music-control {
@@ -334,6 +355,10 @@ button:hover {
     top: 20px;
     right: 20px;
     z-index: 1000;
+    pointer-events: auto;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 .music-btn {
@@ -348,6 +373,7 @@ button:hover {
     align-items: center;
     box-shadow: 0 2px 10px rgba(255, 105, 180, 0.3);
     transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .music-btn i {
