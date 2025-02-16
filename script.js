@@ -10,14 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 预定义"不要"按钮的位置
     const positions = [
-        { x: '10%', y: '70%' },
-        { x: '80%', y: '60%' },
-        { x: '50%', y: '80%' },
-        { x: '20%', y: '50%' },
-        { x: '70%', y: '40%' },
-        { x: '40%', y: '30%' },
-        { x: '90%', y: '20%' },
-        { x: '30%', y: '90%' },
+        { x: '20%', y: '70%' },
+        { x: '70%', y: '60%' },
+        { x: '40%', y: '80%' },
+        { x: '80%', y: '40%' },
+        { x: '30%', y: '50%' },
+        { x: '60%', y: '30%' },
+        { x: '50%', y: '20%' },
+        { x: '20%', y: '30%' },
     ];
     let currentPosIndex = 0;
     
@@ -98,34 +98,44 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // "不要"按钮的新效果
     function moveButton(event) {
-        event.preventDefault();
+        // 阻止默认行为
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         
-        // 防止连续触发
-        if (noBtn.style.opacity === '0') return;
+        // 获取可见区域的尺寸
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+        const buttonHeight = noBtn.offsetHeight;
+        const buttonWidth = noBtn.offsetWidth;
+        
+        // 计算安全区域
+        const safeAreaTop = viewportHeight * 0.2;
+        const safeAreaBottom = viewportHeight * 0.8;
+        const safeAreaLeft = viewportWidth * 0.1;
+        const safeAreaRight = viewportWidth * 0.9;
+        
+        // 立即切换到新位置
+        currentPosIndex = (currentPosIndex + 1) % positions.length;
+        const pos = positions[currentPosIndex];
+        
+        // 将百分比转换为实际像素
+        const xPercent = parseInt(pos.x) / 100;
+        const yPercent = parseInt(pos.y) / 100;
+        
+        // 计算实际位置，确保在安全区域内
+        const x = Math.min(Math.max(safeAreaLeft, viewportWidth * xPercent - buttonWidth/2), safeAreaRight - buttonWidth);
+        const y = Math.min(Math.max(safeAreaTop, viewportHeight * yPercent - buttonHeight/2), safeAreaBottom - buttonHeight);
+        
+        // 应用新位置
+        noBtn.style.left = x + 'px';
+        noBtn.style.top = y + 'px';
         
         // 乌萨其表情变化
         usagiImg.src = './images/usagi-sad.png';
-        
-        // 按钮淡出
-        noBtn.style.transition = 'all 0.3s ease';
-        noBtn.style.opacity = '0';
-        noBtn.style.transform = 'scale(0.8)';
-        
-        // 切换到新位置并淡入
         setTimeout(() => {
-            currentPosIndex = (currentPosIndex + 1) % positions.length;
-            noBtn.style.left = positions[currentPosIndex].x;
-            noBtn.style.top = positions[currentPosIndex].y;
-            
-            setTimeout(() => {
-                noBtn.style.opacity = '1';
-                noBtn.style.transform = 'scale(1)';
-                
-                // 恢复乌萨其表情
-                setTimeout(() => {
-                    usagiImg.src = './images/usagi-normal.png';
-                }, 300);
-            }, 100);
+            usagiImg.src = './images/usagi-normal.png';
         }, 300);
         
         noCount++;
@@ -133,35 +143,34 @@ document.addEventListener('DOMContentLoaded', () => {
             yesBtn.style.transform = 'scale(1.5)';
             yesBtn.style.animation = 'pulse 1s infinite';
         }
-        
-        return false;
     }
 
     // 初始化"不要"按钮样式
     noBtn.style.position = 'fixed';
-    noBtn.style.left = positions[0].x;
-    noBtn.style.top = positions[0].y;
-    noBtn.style.transition = 'all 0.3s ease';
+    // 设置初始位置
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    const buttonHeight = noBtn.offsetHeight;
+    const buttonWidth = noBtn.offsetWidth;
+    const initialX = viewportWidth * 0.2 - buttonWidth/2;
+    const initialY = viewportHeight * 0.7 - buttonHeight/2;
+    noBtn.style.left = initialX + 'px';
+    noBtn.style.top = initialY + 'px';
 
-    // 添加所有可能的事件监听
+    // 简化事件监听，只保留最必要的
     noBtn.addEventListener('mouseover', moveButton);
-    noBtn.addEventListener('touchstart', moveButton, { passive: false });
-    noBtn.addEventListener('touchmove', moveButton, { passive: false });
-    noBtn.addEventListener('click', moveButton);
+    noBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // 防止触发点击事件
+        moveButton(e);
+    });
     
-    // 防止按钮被点击
+    // 防止按钮被点击时触发其他事件
     noBtn.addEventListener('touchend', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         return false;
     });
 
-    // 优化移动端体验
-    document.addEventListener('touchmove', (e) => {
-        if (e.target === noBtn) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-    
     // "可以"按钮的点击效果
     yesBtn.addEventListener('click', () => {
         // 创建烟花效果
